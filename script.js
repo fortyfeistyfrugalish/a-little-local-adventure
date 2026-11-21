@@ -17,43 +17,41 @@ function fffShowCopyFallback(url){
   const input=overlay.querySelector('input');input.value=url;input.focus();input.select();
 }
 function fffCopy(url,button){
-  const field=document.createElement('textarea');
-  field.value=url;
-  field.setAttribute('readonly','');
-  field.style.cssText='position:fixed;left:0;top:0;width:1px;height:1px;opacity:0';
-  document.body.appendChild(field);
-  field.focus();field.select();
-  try{field.setSelectionRange(0,field.value.length)}catch(_){}
+  // Use the same visible, selectable input approach that worked in the Squarespace embed.
+  const card=button.closest('article')||button.closest('.event-card')||button.parentElement;
+  let panel=card.querySelector('.fff-copy-link-panel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.className='fff-copy-link-panel';
+    panel.setAttribute('role','status');
+    panel.style.cssText='margin:8px 0 0;padding:0;color:#246b42;font-size:13px;font-weight:600';
+    const label=document.createElement('div');
+    label.className='fff-copy-label';
+    const input=document.createElement('input');
+    input.type='text';input.readOnly=true;
+    input.setAttribute('aria-label','Event link to copy');
+    input.style.cssText='display:block;width:100%;box-sizing:border-box;padding:8px;margin-top:6px;border:1px solid #bbb;border-radius:6px;color:#222;background:#fff;font-size:13px';
+    panel.append(label,input);
+    const share=button.closest('.fff-share')||button.closest('details')||button;
+    share.insertAdjacentElement('afterend',panel);
+  }
+  const label=panel.querySelector('.fff-copy-label');
+  const input=panel.querySelector('input');
+  input.value=url;
+  panel.hidden=false;
+  input.style.display='block';
+  input.focus();input.select();
+  try{input.setSelectionRange(0,input.value.length)}catch(_){}
   let copied=false;
   try{copied=document.execCommand('copy')}catch(_){}
-  field.remove();
-  const card=button.closest('article')||button.closest('.event-card')||button.parentElement;
-  const oldPanel=card.querySelector('.fff-copy-link-panel');
-  if(oldPanel)oldPanel.remove();
-  let status=card.querySelector('.fff-copy-status');
-  if(!status){
-    status=document.createElement('div');
-    status.className='fff-copy-status';
-    status.setAttribute('role','status');
-    status.style.cssText='display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;padding:5px 9px;border-radius:6px;font-size:13px;font-weight:600;color:#246b42;background:#eaf5ed';
-    const share=button.closest('.fff-share')||button.closest('details')||button;
-    share.insertAdjacentElement('afterend',status);
-  }
+  clearTimeout(panel._fffTimer);
   if(copied){
-    status.textContent='✓ Link Copied';
+    label.textContent='✓ Link Copied';
+    input.style.display='none';
+    panel._fffTimer=setTimeout(()=>{if(panel.isConnected)panel.remove()},2200);
   }else{
-    status.textContent='Copy unavailable — select the link';
-    const link=document.createElement('input');
-    link.readOnly=true;link.value=url;
-    link.setAttribute('aria-label','Event link to copy');
-    link.style.cssText='display:block;width:100%;margin-top:6px;padding:6px;border:1px solid #bbb;border-radius:4px';
-    status.style.display='block';
-    status.appendChild(link);link.focus();link.select();
-  }
-  if(copied){
-    status.style.display='inline-flex';
-    clearTimeout(status._fffTimer);
-    status._fffTimer=setTimeout(()=>{if(status.isConnected)status.remove()},2200);
+    label.textContent='Select the link below and press Ctrl+C to copy';
+    input.focus();input.select();
   }
 }
 function shareEvent(action,key,button){
