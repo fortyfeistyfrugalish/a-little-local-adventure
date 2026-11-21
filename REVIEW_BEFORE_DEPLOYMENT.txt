@@ -1,0 +1,1 @@
+Prepared from your latest Events Netlify deployment. Only index.html, script.js and style.css replaced with previously prepared sharing-button frontend. Netlify backend and config preserved. Not deployed. Test live links after approval.
