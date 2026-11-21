@@ -64,7 +64,16 @@ function shareEvent(action,key,button){
   }else if(action==='fb'){
     window.open('https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url),'_blank','noopener,noreferrer');
   }else if(action==='copy'){
-    fffCopy(url,button);
+    // Copy the individual event listing, matching the card's Explore this event link.
+    const individualEventUrl=safeUrl(e.url);
+    if(individualEventUrl){
+      fffCopy(individualEventUrl,button);
+    }else{
+      const old=button.textContent;
+      button.textContent='Event link unavailable';
+      setTimeout(()=>{if(button.isConnected)button.textContent=old},2400);
+      return;
+    }
   }
   const disclosure=button.closest('details');
   if(disclosure)disclosure.open=false;
