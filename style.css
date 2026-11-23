@@ -25,3 +25,4 @@
 .fff-share .fff-menu .fff-pin{background:#bd081c;color:#fff;border-color:#bd081c}
 .fff-share .fff-menu .fff-fb{background:#1877f2;color:#fff;border-color:#1877f2}
 .fff-share .fff-menu svg{width:14px;height:14px}
+\n/* Single featured event, preserving the regular card layout and automatic expiration. */\n.card-featured{border:2px solid var(--rust);box-shadow:0 10px 24px #b9512c20}\n.featured-ribbon{position:absolute;top:12px;left:12px;z-index:2;background:var(--green);color:#fffaf0;border-radius:999px;padding:8px 12px;font-size:.7rem;font-weight:800;letter-spacing:.045em;box-shadow:0 2px 10px #0002}\n
