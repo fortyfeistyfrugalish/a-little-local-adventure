@@ -27,5 +27,5 @@
 .fff-share .fff-menu svg{width:14px;height:14px}
 
 /* Featured Local Find — only the selected, existing event card is enhanced. */
-.fff-featured-card{position:relative;border:2px solid var(--rust);box-shadow:0 10px 24px #b9512c20}
+.fff-featured-card{position:relative;order:-1;border:2px solid var(--rust);box-shadow:0 10px 24px #b9512c20}.fff-featured-clickable{cursor:pointer}.fff-featured-clickable:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 .fff-featured-label{position:absolute;top:12px;left:12px;z-index:3;background:var(--green);color:#fffaf0;border-radius:999px;padding:8px 12px;font-size:.7rem;font-weight:800;letter-spacing:.04em;box-shadow:0 2px 10px #0002;pointer-events:none}
