@@ -89,8 +89,26 @@ if(featuredIndex!==-1){
   const badge=document.createElement("span");
   badge.className="fff-featured-label";
   badge.textContent="✦ Featured Local Find";
-  featuredCard.appendChild(badge);
-  container.prepend(featuredCard);
+  (featuredCard.querySelector(".visual")||featuredCard).appendChild(badge);
+  // Keep the original DOM order and event-delegated share handlers intact.
+  // CSS grid order visually positions the featured card first.
+  const officialLink=featuredCard.querySelector(".content > a[href]");
+  if(officialLink){
+   featuredCard.classList.add("fff-featured-clickable");
+   featuredCard.tabIndex=0;
+   featuredCard.setAttribute("role","group");
+   featuredCard.setAttribute("aria-label","Featured event: "+items[featuredIndex].name);
+   featuredCard.addEventListener("click",event=>{
+    if(event.target.closest("a,button,summary,details,input"))return;
+    window.open(officialLink.href,"_blank","noopener,noreferrer");
+   });
+   featuredCard.addEventListener("keydown",event=>{
+    if((event.key==="Enter"||event.key===" ")&&event.target===featuredCard){
+     event.preventDefault();
+     officialLink.click();
+    }
+   });
+  }
  }
 };const selectedEvent=new URLSearchParams(location.search).get('event');if(selectedEvent){const match=items.find(e=>eventKey(e)===selectedEvent);if(match){const btn=Array.from(document.querySelectorAll('#events button[data-key]')).find(b=>b.dataset.key===selectedEvent);if(btn){const card=btn.closest('.card');card.classList.add('fff-target');if(!window.__fffScrolled){window.__fffScrolled=true;requestAnimationFrame(()=>card.scrollIntoView({block:'center',behavior:'smooth'}))}}}}document.querySelectorAll(".visual img").forEach(image=>image.addEventListener("error",()=>{const visual=image.parentElement;visual.classList.add("no-image");image.remove();const fallback=document.createElement("span");fallback.className="fallback";fallback.innerHTML="Around<br>Town ✿";visual.insertBefore(fallback,visual.querySelector(".date-stamp"));},{once:true}));}async function init(){try{const res=await fetch("/.netlify/functions/events",{cache:"no-store"});if(!res.ok)throw Error("Feed unavailable");const data=await res.json();state.events=Array.isArray(data.events)?data.events:[];const selectedKey=new URLSearchParams(location.search).get('event');if(selectedKey){const match=state.events.find(e=>eventKey(e)===selectedKey);if(match){state.region=match.region;document.querySelectorAll('[data-region]').forEach(b=>b.classList.toggle('active',b.dataset.region===state.region))}}const cats=[...new Set(state.events.map(e=>e.category).filter(Boolean))].sort();$("category").innerHTML='<option value="">All categories</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");render()}catch(e){$("status").textContent="";$("events").innerHTML='<div class="empty"><h3>Good things are coming!</h3><p>The events feed isn’t connected yet. Check back soon for local happenings.</p></div>'}}document.querySelectorAll("[data-region]").forEach(b=>b.addEventListener("click",()=>{state.region=b.dataset.region;document.querySelectorAll("[data-region]").forEach(x=>x.classList.toggle("active",x===b));render()}));["search","category","admission","date-filter"].forEach(id=>$(id).addEventListener("input",render));init();
 $("events").addEventListener('click',event=>{const button=event.target.closest('button[data-share]');if(button)shareEvent(button.dataset.share,button.dataset.key,button)});
